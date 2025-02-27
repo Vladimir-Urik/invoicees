@@ -110,6 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('language').addEventListener('change', function() {
         // Could update placeholder texts or labels based on selected language
     });
+
+    // Setup validation
+    setupValidation();
+
+    // Add remove button functionality to the first item
+    document.querySelector('#items .item .remove-item').addEventListener('click', function() {
+        removeItem(this.closest('.item'));
+    });
 });
 
 // Add new item row
@@ -133,9 +141,30 @@ function addNewItem() {
             <input type="number" id="price${newItemIndex}" name="price[]" step="0.01" required>
         </div>
         <div class="item-total">Celkem: 0.00</div>
+        <button type="button" class="remove-item">Odebrat</button>
     `;
     
     itemsContainer.appendChild(itemDiv);
+
+    // Add validation to new input fields
+    itemDiv.querySelectorAll('input').forEach(element => {
+        element.addEventListener('blur', () => {
+            validateField(element);
+        });
+        
+        element.addEventListener('input', () => {
+            element.classList.remove('error');
+            const errorMsg = element.nextElementSibling;
+            if (errorMsg && errorMsg.classList.contains('error-message')) {
+                errorMsg.style.display = 'none';
+            }
+        });
+    });
+    
+    // Add remove button functionality
+    itemDiv.querySelector('.remove-item').addEventListener('click', function() {
+        removeItem(itemDiv);
+    });
 }
 
 // Calculate item totals and grand total
@@ -234,14 +263,20 @@ function generatePDF() {
 
 // Validate form
 function validateForm() {
-    const requiredElements = document.querySelectorAll('[required]');
-    for (const element of requiredElements) {
-        if (!element.value.trim()) {
-            element.focus();
-            return false;
-        }
+  const formElements = document.querySelectorAll('input, textarea, select');
+  let isValid = true;
+  
+  for (const element of formElements) {
+    // Only validate visible elements that are either required or have a value
+    if (element.offsetParent !== null && 
+        (element.hasAttribute('required') || element.value.trim())) {
+      if (!validateField(element)) {
+        isValid = false;
+      }
     }
-    return true;
+  }
+  
+  return isValid;
 }
 
 // Create invoice HTML content
@@ -447,5 +482,111 @@ function generateQRCode(data) {
     } catch (error) {
         console.error("QR Code generation error:", error);
         return '<div>QR kód nelze vygenerovat</div>';
+    }
+}
+
+// Validate individual field and show error message
+function validateField(element) {
+  // Remove any existing error styling
+  element.classList.remove('error');
+  
+  // Get or create error message element
+  let errorMsg = element.nextElementSibling;
+  if (!errorMsg || !errorMsg.classList.contains('error-message')) {
+    errorMsg = document.createElement('div');
+    errorMsg.className = 'error-message';
+    element.parentNode.insertBefore(errorMsg, element.nextElementSibling);
+  }
+  
+  // Default: no error
+  errorMsg.style.display = 'none';
+  errorMsg.textContent = '';
+  
+  // Check if field is required and empty
+  if (element.hasAttribute('required') && !element.value.trim()) {
+    element.classList.add('error');
+    errorMsg.textContent = 'Toto pole je povinné';
+    errorMsg.style.display = 'block';
+    return false;
+  }
+  
+  // Special field validations
+  if (element.id === 'bankAccount' && element.value) {
+    // Simple IBAN validation
+    const ibanRegex = /^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/;
+    if (!ibanRegex.test(element.value.replace(/\s+/g, ''))) {
+      element.classList.add('error');
+      errorMsg.textContent = 'Zadejte platný IBAN';
+      errorMsg.style.display = 'block';
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+// Setup validation handlers
+function setupValidation() {
+  document.querySelectorAll('input, textarea, select').forEach(element => {
+    if (!element.readOnly) {  // Don't add validation to readonly fields
+      element.addEventListener('blur', () => {
+        validateField(element);
+      });
+      
+      // Clear error when user starts typing
+      element.addEventListener('input', () => {
+        element.classList.remove('error');
+        const errorMsg = element.nextElementSibling;
+        if (errorMsg && errorMsg.classList.contains('error-message')) {
+          errorMsg.style.display = 'none';
+        }
+      });
+    }
+  });
+}
+
+// Remove item row
+function removeItem(itemDiv) {
+    const itemsContainer = document.getElementById('items');
+    
+    // Don't allow removal if it's the last item
+    if (itemsContainer.children.length <= 1) {
+        alert('Faktura musí obsahovat alespoň jednu položku.');
+        return;
+    }
+    
+    // Confirm before removing
+    if (confirm('Opravdu chcete odstranit tuto položku?')) {
+        itemDiv.remove();
+        calculateTotals();
+        
+        // Renumber remaining items for clarity
+        const items = itemsContainer.querySelectorAll('.item');
+        items.forEach((item, index) => {
+            const newIndex = index + 1;
+            
+            // Update label and input IDs
+            const descInput = item.querySelector('input[name="item[]"]');
+            const qtyInput = item.querySelector('input[name="quantity[]"]');
+            const priceInput = item.querySelector('input[name="price[]"]');
+            
+            if (descInput) {
+                const label = descInput.previousElementSibling;
+                label.setAttribute('for', `item${newIndex}`);
+                descInput.id = `item${newIndex}`;
+            }
+            
+            if (qtyInput) {
+                const label = qtyInput.previousElementSibling;
+                label.setAttribute('for', `quantity${newIndex}`);
+                qtyInput.id = `quantity${newIndex}`;
+            }
+            
+            if (priceInput) {
+                const label = priceInput.previousElementSibling;
+                label.setAttribute('for', `price${newIndex}`);
+                priceInput.id = `price${newIndex}`;
+            }
+        });
     }
 }
