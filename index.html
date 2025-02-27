@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generátor Faktur</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Generátor Faktur</h1>
+        
+        <form id="invoiceForm">
+            <!-- Dodavatel -->
+            <div class="section">
+                <h2>Údaje dodavatele</h2>
+                <div class="form-group">
+                    <label for="supplierName">Jméno/Firma:</label>
+                    <input type="text" id="supplierName" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplierAddress">Adresa:</label>
+                    <textarea id="supplierAddress" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="supplierIC">IČ:</label>
+                    <input type="text" id="supplierIC">
+                </div>
+                <div class="form-group">
+                    <label for="supplierDIC">DIČ:</label>
+                    <input type="text" id="supplierDIC">
+                </div>
+            </div>
+            
+            <!-- Odběratel -->
+            <div class="section">
+                <h2>Údaje odběratele</h2>
+                <div class="form-group">
+                    <label for="customerName">Jméno/Firma:</label>
+                    <input type="text" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerAddress">Adresa:</label>
+                    <textarea id="customerAddress" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="customerIC">IČ:</label>
+                    <input type="text" id="customerIC">
+                </div>
+                <div class="form-group">
+                    <label for="customerDIC">DIČ:</label>
+                    <input type="text" id="customerDIC"> <!-- No 'required' attribute -->
+                </div>
+            </div>
+            
+            <!-- Faktura -->
+            <div class="section">
+                <h2>Údaje faktury</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="invoiceNumber">Číslo faktury:</label>
+                        <input type="text" id="invoiceNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="language">Jazyk faktury:</label>
+                        <select id="language" required>
+                            <option value="cs">Čeština</option>
+                            <option value="sk">Slovenština</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="currency">Měna:</label>
+                    <select id="currency" required>
+                        <option value="Kč">Kč - Česká koruna</option>
+                        <option value="€">€ - Euro</option>
+                        <option value="$">$ - USD</option>
+                        <option value="£">£ - Britská libra</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dateIssued">Datum vystavení:</label>
+                        <input type="date" id="dateIssued" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateDue">Datum splatnosti:</label>
+                        <input type="date" id="dateDue" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Platební údaje -->
+            <div class="section">
+                <h2>Platební údaje</h2>
+                <div class="form-group">
+                    <label for="bankAccount">IBAN:</label>
+                    <input type="text" id="bankAccount" placeholder="CZ1234567890123456789012">
+                </div>
+                <div class="form-group">
+                    <label for="bankName">Název banky:</label>
+                    <input type="text" id="bankName" placeholder="Název vaší banky">
+                </div>
+                <!-- Removed variableSymbol and paymentReference fields -->
+            </div>
+            
+            <!-- Položky -->
+            <div class="section">
+                <h2>Položky faktury</h2>
+                <div id="items">
+                    <div class="item">
+                        <div class="form-group">
+                            <label for="item1">Popis:</label>
+                            <input type="text" id="item1" name="item[]" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity1">Počet:</label>
+                            <input type="number" id="quantity1" name="quantity[]" value="1" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="price1">Cena za jednotku:</label>
+                            <input type="number" id="price1" name="price[]" step="0.01" required>
+                        </div>
+                        <div class="item-total">Celkem: 0.00</div>
+                    </div>
+                </div>
+                <button type="button" id="addItem">Přidat položku</button>
+            </div>
+            
+            <!-- Celkem -->
+            <div class="section total-section">
+                <div class="total">Celková částka: <span id="totalAmount">0.00</span></div>
+            </div>
+
+            <!-- Footer text -->
+            <div class="section">
+                <h2>Poznámka v zápatí</h2>
+                <div class="form-group">
+                    <label for="footerMessage">Text zápatí:</label>
+                    <input type="text" id="footerMessage" value="Děkujeme za spolupráci!" class="full-width">
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button type="button" id="generatePDF">Generovat PDF</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Náhled faktury (skrytý) -->
+    <div id="invoicePreview" class="hidden">
+        <div class="invoice-container" id="invoiceContent"></div>
+    </div>
+    
+    <!-- PDF generační knihovny -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

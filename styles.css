@@ -1,0 +1,309 @@
+/* Add Inter font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif; /* Changed to Inter */
+    line-height: 1.6;
+    background-color: #f5f5f5;
+    color: #333;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+h2 {
+    margin-bottom: 15px;
+    color: #3498db;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #eaeaea; /* Added border instead of background */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+textarea {
+    height: 80px;
+}
+
+/* Add this with your other form element styles */
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: white;
+    appearance: auto; /* Show dropdown arrow */
+}
+
+select:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+input[readonly] {
+    background-color: #f9f9f9;
+    color: #666;
+    cursor: not-allowed;
+    border: 1px solid #ddd;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 2fr 0.5fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #ddd;
+}
+
+.item-total {
+    display: flex;
+    align-items: flex-end;
+    font-weight: bold;
+    padding-bottom: 10px;
+}
+
+.total-section {
+    background-color: transparent;
+    border: 1px solid #eaeaea;
+}
+
+.total {
+    text-align: right;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.actions {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.hidden {
+    display: none;
+}
+
+#invoiceContent {
+    padding: 30px;
+    background-color: white;
+}
+
+/* Styly pro tisk */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #invoicePreview, #invoicePreview * {
+        visibility: visible;
+    }
+    #invoicePreview {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}
+
+/* PDF Invoice Styling */
+#invoicePreview {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+}
+
+.invoice-container {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+}
+
+.invoice-header h1 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.invoice-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.supplier-info, .customer-info {
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #eaeaea; /* Added border instead of background */
+    background-color: transparent;
+}
+
+.dates {
+    grid-column: span 2;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #eaeaea; /* Added border instead of background */
+    background-color: transparent; 
+}
+
+.invoice-items {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.invoice-items th, 
+.invoice-items td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.invoice-items th {
+    border-bottom: 2px solid #ddd; /* Enhanced border for better separation */
+    font-weight: 600;
+    background-color: transparent;
+}
+
+.invoice-items tfoot {
+    font-weight: 600;
+    background-color: transparent;
+    border-top: 2px solid #ddd;
+}
+
+.total-label {
+    text-align: right;
+}
+
+.total-amount {
+    font-size: 16px;
+}
+
+.invoice-footer {
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    font-style: italic;
+}
+
+/* Add these styles at the end of your file */
+
+.payment-details {
+    margin-top: 30px;
+    border: 1px solid #eaeaea;
+    padding: 20px;
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.payment-details h3 {
+    grid-column: span 2;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: 600;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 5px;
+}
+
+.payment-info-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.payment-info-table th, 
+.payment-info-table td {
+    padding: 8px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.payment-info-table th {
+    text-align: left;
+    font-weight: 600;
+    width: 40%;
+}
+
+.qr-code-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-code {
+    max-width: 150px;
+    height: auto;
+}
+
+.qr-code-container p {
+    margin-top: 8px;
+    font-size: 0.9em;
+    color: #666;
+}
