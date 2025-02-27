@@ -460,11 +460,43 @@ function formatDate(dateString) {
 
 // Add these new functions for QR code generation
 
-// Function to generate QR payment string (format based on Czech QR payment standard)
+// Function to generate QR payment string according to SEPA/EPC QR code standard
 function generateQRPaymentString(iban, amount, currency, variableSymbol, message) {
     // Remove spaces from IBAN
     iban = iban.replace(/\s+/g, '');
-    return `SPD*1.0*ACC:${iban}*AM:${amount.toFixed(2)}*CC:${currency}*X-VS:${variableSymbol}*MSG:${message}`;
+    
+    // Format amount properly (with decimal point)
+    const formattedAmount = amount.toFixed(2);
+    
+    // Get beneficiary name from supplier name
+    const beneficiaryName = document.getElementById('supplierName').value;
+    
+    // Handle currency - SEPA uses EUR, but we'll be flexible
+    let qrCurrency = 'EUR';
+    if (currency === '€') {
+        qrCurrency = 'EUR';
+    } else if (currency === 'Kč' || currency === 'CZK') {
+        qrCurrency = 'CZK';
+    }
+    
+    // Build EPC QR code format
+    // Format reference: https://en.wikipedia.org/wiki/EPC_QR_code
+    const lines = [
+        'BCD',                           // Header
+        '002',                           // Version
+        '1',                             // Encoding (1 = UTF-8)
+        'SCT',                           // SEPA Credit Transfer
+        '',                              // BIC (can be empty)
+        beneficiaryName,                 // Recipient name
+        iban,                            // IBAN
+        `${qrCurrency}${formattedAmount}`, // Amount with currency
+        '',                              // Purpose code (empty)
+        variableSymbol,                  // Variable symbol as reference
+        message                          // Payment message
+    ];
+    
+    // Join with line breaks
+    return lines.join('\n');
 }
 
 // Function to generate QR code HTML
