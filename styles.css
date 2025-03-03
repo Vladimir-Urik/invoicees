@@ -27,7 +27,7 @@ body {
 h1 {
     text-align: center;
     margin-bottom: 30px;
-    color: #2c3e50;
+    color: #000000;
     font-weight: 700;
 }
 
@@ -188,7 +188,7 @@ button:hover {
 
 .invoice-header h1 {
     font-size: 24px;
-    color: #2c3e50;
+    color: #000000;
     margin-bottom: 20px;
 }
 
@@ -268,7 +268,7 @@ button:hover {
 
 .payment-details h3 {
     grid-column: span 2;
-    color: #2c3e50;
+    color: #000000;
     margin-bottom: 15px;
     font-weight: 600;
     border-bottom: 1px solid #eaeaea;
@@ -307,7 +307,7 @@ button:hover {
 .qr-code-container p {
     margin-top: 8px;
     font-size: 0.9em;
-    color: #666;
+    color: #000000;
 }
 
 /* Error handling styles */

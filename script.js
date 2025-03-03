@@ -1,4 +1,4 @@
-// Add translations at the top of your script file
+// Update translations to include VAT
 const translations = {
     cs: {
         invoiceTitle: "FAKTURA č.",
@@ -17,7 +17,8 @@ const translations = {
         variableSymbol: "Variabilní symbol",
         message: "Zpráva pro příjemce",
         amount: "Částka",
-        scanQR: "Naskenujte pro platbu"
+        scanQR: "Naskenujte pro platbu",
+        vat: "DIČ" // Add VAT translation
     },
     sk: {
         invoiceTitle: "FAKTÚRA č.",
@@ -36,7 +37,8 @@ const translations = {
         variableSymbol: "Variabilný symbol",
         message: "Správa pre príjemcu",
         amount: "Suma",
-        scanQR: "Naskenujte pre platbu"
+        scanQR: "Naskenujte pre platbu",
+        vat: "DIČ" // Add VAT translation
     },
     en: {
         invoiceTitle: "INVOICE No.",
@@ -55,7 +57,8 @@ const translations = {
         variableSymbol: "Variable Symbol",
         message: "Payment Reference",
         amount: "Amount",
-        scanQR: "Scan to pay"
+        scanQR: "Scan to pay",
+        vat: "VAT" // Add VAT translation
     }
 };
 
@@ -289,8 +292,8 @@ function createInvoiceHTML() {
     
     const customerName = document.getElementById('customerName').value;
     const customerAddress = document.getElementById('customerAddress').value;
-    const customerIC = document.getElementById('customerIC').value;
-    const customerDIC = document.getElementById('customerDIC').value;
+    const customerIC = document.getElementById('customerIC').value.trim();
+    const customerDIC = document.getElementById('customerDIC').value.trim();
     
     const invoiceNumber = document.getElementById('invoiceNumber').value;
     const dateIssued = formatDate(document.getElementById('dateIssued').value);
@@ -400,7 +403,7 @@ function createInvoiceHTML() {
                 <p><strong>${customerName}</strong></p>
                 <p>${customerAddress.replace(/\n/g, '<br>')}</p>
                 ${customerIC ? `<p>IČ: ${customerIC}</p>` : ''}
-                ${customerDIC && customerDIC.trim() ? `<p>DIČ: ${customerDIC}</p>` : ''}
+                ${customerDIC ? `<p>${t.vat}: ${customerDIC}</p>` : ''}
             </div>
             
             <div class="dates">
